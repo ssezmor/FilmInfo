@@ -1,0 +1,117 @@
+﻿@model IEnumerable<FilmInfo.Models.Film>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>Index</h2>
+@Scripts.Render("~/scripts/jquery.bootpag.min.js")
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OriginalName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RussianName)
+        </th>
+        <th>  
+            @Html.DisplayNameFor(model => model.PosterUrl)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Year)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Slogan)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KPRatings)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IMDbRatings)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OriginalName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RussianName)
+            </td>
+            <td>
+                
+                <img src="@Url.Content(item.PosterUrl)" />
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Slogan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KPRatings)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IMDbRatings)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<ul class="pagination">
+  
+
+    @if (ViewBag.dbCount != null)
+    {
+          if (ViewBag.Page > 0)
+    {
+
+        <li>
+            <a href="@Url.Action("Index", new { page = ViewBag.Page - 1 })"
+               class="btn btn-default">
+                &laquo; Prev
+            </a>
+    </li>
+        }
+
+        for (int i = 0; i <= ViewBag.dbCount - 1; i++)
+        {
+
+        int pageNumber = i + 1;
+
+
+
+<li>@Html.ActionLink(pageNumber.ToString(), "Index", "Film", new { page = @i }, null)</li>
+
+        }
+        if (ViewBag.Page < ViewBag.MaxPage)
+        {
+            <li>
+            <a href="@Url.Action("Index", new { page = ViewBag.Page + 1 })"
+               class="btn btn-default">
+                Next &raquo;
+            </a>
+        </li>
+        }
+    }
+</ul>
