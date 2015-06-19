@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Linq;
 using System.Web;
 
@@ -20,8 +21,11 @@ namespace FilmInfo.Models
         }
 
       //  public System.Data.Entity.DbSet<FilmInfo.Models.Film> Film { get; set; }
-
-
+        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+        //}
+            
         public DbSet<Country> Country { get; set; }
         public DbSet<Director> Director { get; set; }
         public DbSet<Film> Film { get; set; }
