@@ -85,7 +85,9 @@
 </nav>
 
 
-<script src="~/scripts/jquery.bootpag.js" type="text/javascript">
+@section scripts {
+    @Scripts.Render("~/Scripts/jquery.bootpag.js")
+<script src="~/Scripts/jquery.bootpag.js" type="text/javascript">
     $("[data-bootpag]").each(function () {
         var $this = $(this);
         var options = $this.data("bootpag");
@@ -93,6 +95,10 @@
     })
 
 </script>
+}
+
+
+
 
 @*<ul class="pagination">
 
