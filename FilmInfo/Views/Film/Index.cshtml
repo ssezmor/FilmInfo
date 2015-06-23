@@ -4,8 +4,6 @@
     ViewBag.Title = "Index";
 }
 
-@*@Scripts.Render("~/Scripts/jquery.bootpag.js");*@
-
 <h2>Index</h2>
 
 <p>
@@ -76,64 +74,17 @@
             </td>
         </tr>
     }
-
 </table>
 
-
-<nav id="paginationElement" data-bootpag='{total: 10, page: 10}'>
-    
-</nav>
-
+<nav data-bootpag='{"total": 10, "page": 2}'></nav>
 
 @section scripts {
     @Scripts.Render("~/Scripts/jquery.bootpag.js")
-<script src="~/Scripts/jquery.bootpag.js" type="text/javascript">
-    $("[data-bootpag]").each(function () {
-        var $this = $(this);
-        var options = $this.data("bootpag");
-        $this.bootpag(options);
-    })
-
-</script>
+    <script type="text/javascript">
+        $("[data-bootpag]").each(function () {
+            var $this = $(this);
+            var options = $this.data("bootpag");
+            $this.bootpag(options);
+        });
+    </script>
 }
-
-
-
-
-@*<ul class="pagination">
-
-
-        @if (ViewBag.dbCount != null)
-        {
-              if (ViewBag.Page > 0)
-        {
-
-            <li>
-                <a href="@Url.Action("Index", new { page = ViewBag.Page - 1 })"
-                   class="btn btn-default">
-                    &laquo; Prev
-                </a>
-        </li>
-            }
-
-            for (int i = 0; i <= ViewBag.dbCount - 1; i++)
-            {
-
-            int pageNumber = i + 1;
-
-
-
-    <li>@Html.ActionLink(pageNumber.ToString(), "Index", "Film", new { page = @i }, null)</li>
-
-            }
-            if (ViewBag.Page < ViewBag.MaxPage)
-            {
-                <li>
-                <a href="@Url.Action("Index", new { page = ViewBag.Page + 1 })"
-                   class="btn btn-default">
-                    Next &raquo;
-                </a>
-            </li>
-            }
-        }
-    </ul>*@
