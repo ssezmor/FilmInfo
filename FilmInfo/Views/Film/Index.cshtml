@@ -76,15 +76,18 @@
     }
 </table>
 
-<nav data-bootpag='{"total": 10, "page": 2}'></nav>
+<nav data-bootpag='{"total": "@ViewBag.count", "maxVisible": "@ViewBag.PageSize", "href": "@Url.Action("Index")?page={{number}}" , "firstLastUse": true, "first": " ←" ,"last": " →" }'>
+
+</nav>
 
 @section scripts {
-    @Scripts.Render("~/Scripts/jquery.bootpag.js")
+    @Scripts.Render("~/scripts/jquery.bootpag.js")
     <script type="text/javascript">
         $("[data-bootpag]").each(function () {
             var $this = $(this);
             var options = $this.data("bootpag");
             $this.bootpag(options);
-        });
+        })
     </script>
+
 }

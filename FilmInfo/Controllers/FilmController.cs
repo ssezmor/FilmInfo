@@ -20,11 +20,11 @@ namespace FilmInfo.Controllers
         {
             var dataSource = db.Film;
 
-            const int PageSize = 10; // you can always do something more elegant to set this
+            const int PageSize = 10; 
 
             var count = dataSource.Count();
 
-            
+
 
             IEnumerable<Film> OrderedDataSource = dataSource.OrderBy(film => film.Id);
 
@@ -32,9 +32,9 @@ namespace FilmInfo.Controllers
 
             this.ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
 
-            this.ViewBag.Page = page;
-            this.ViewBag.dbcount = count / PageSize;
-
+            this.ViewBag.PageSize = PageSize;
+            this.ViewBag.Count = count / PageSize;
+            this.ViewBag.CurrentPage = 0;
             return View(data);
         }
 
