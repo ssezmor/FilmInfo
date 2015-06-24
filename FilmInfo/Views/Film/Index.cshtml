@@ -4,90 +4,86 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
+@foreach (var item in Model)
+{
+
+
+    <dl class="dl-horizontal" >
+        <dd>
+            <img src="@Url.Content(@item.PosterUrl)"  style="margin-bottom: 10px"/>
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.OriginalName)
-        </th>
-        <th>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => item.OriginalName)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.RussianName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PosterUrl)
-        </th>
-        <th>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => item.RussianName)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Year)
-        </th>
-        <th>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => item.Year)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Slogan)
-        </th>
-        <th>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => item.Slogan)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.KPRatings)
-        </th>
-        <th>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => item.KPRatings)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.IMDbRatings)
-        </th>
-        <th>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => item.IMDbRatings)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th></th>
-    </tr>
+        </dt>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OriginalName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RussianName)
-            </td>
-            <td>
+        <dd>
+            @Html.DisplayFor(model => item.Description)
+        </dd>
+        <dd>
+            <p>@Html.ActionLink("Details", "Details", new { id = item.Id })</p>
 
-                <img src="@Url.Content(item.PosterUrl)" />
+        </dd>
+    </dl>
 
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slogan)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KPRatings)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IMDbRatings)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-    }
-</table>
+  
+}
 
-<nav data-bootpag='{"total": "@ViewBag.count", "maxVisible": "@ViewBag.PageSize", "href": "@Url.Action("Index")?page={{number}}" , "firstLastUse": true, "first": " ←" ,"last": " →" }'>
 
-</nav>
+<div class="mypaginationclass" data-bootpag='{"total": @ViewBag.count,"page": @ViewBag.CurrentPage, "maxVisible": @ViewBag.PageSize, "href": "@Url.Action("Index")?page={{number}}" , "firstLastUse": "true", "first": " ←" ,"last": " →" }'>
 
+</div>
+@Styles.Render("~/Content/mycss.css")
 @section scripts {
     @Scripts.Render("~/scripts/jquery.bootpag.js")
-    <script type="text/javascript">
-        $("[data-bootpag]").each(function () {
-            var $this = $(this);
-            var options = $this.data("bootpag");
-            $this.bootpag(options);
-        })
-    </script>
+    @Scripts.Render("~/scripts/app/paginationElement.js")
 
 }

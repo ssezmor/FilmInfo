@@ -1404,6 +1404,8 @@ pre code {
   }
 }
 
+
+
 table {
   max-width: 100%;
   background-color: transparent;
@@ -3788,6 +3790,7 @@ textarea.input-group-sm > .input-group-btn > .btn {
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
+
 }
 
 .nav:before,
@@ -6814,3 +6817,4 @@ td.visible-print {
     display: none !important;
   }
 }
+

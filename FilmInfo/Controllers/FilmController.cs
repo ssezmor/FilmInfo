@@ -16,25 +16,25 @@ namespace FilmInfo.Controllers
 
         // GET: /Film/
         
-        public ActionResult Index(int page = 0)
+        public ActionResult Index(int page = 1)
         {
+            int tpage = page - 1;
             var dataSource = db.Film;
 
             const int PageSize = 10; 
 
             var count = dataSource.Count();
 
-
-
             IEnumerable<Film> OrderedDataSource = dataSource.OrderBy(film => film.Id);
 
-            var data = OrderedDataSource.Skip(page * PageSize).Take(PageSize).ToList();
+            var data = OrderedDataSource.Skip(tpage * PageSize).Take(PageSize).ToList();
 
             this.ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
 
             this.ViewBag.PageSize = PageSize;
             this.ViewBag.Count = count / PageSize;
-            this.ViewBag.CurrentPage = 0;
+
+            this.ViewBag.CurrentPage = page;
             return View(data);
         }
 
