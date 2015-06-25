@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using FilmInfo.Models;
 
+
 namespace FilmInfo.Controllers
 {
+
+
     public class FilmController : Controller
     {
         private FilmContext db = new FilmContext();
 
         // GET: /Film/
-        
+
         public ActionResult Index(int page = 1)
         {
             int tpage = page - 1;
             var dataSource = db.Film;
 
-            const int PageSize = 10; 
+            const int PageSize = 10;
 
             var count = dataSource.Count();
 
@@ -45,12 +45,39 @@ namespace FilmInfo.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Film film = db.Film.Find(id);
-            if (film == null)
+
+
+            Film filminformation = db.Film.Find(id);
+            FullFilmInfo fullinfo = new FullFilmInfo();
+
+            string country = "", director = "";
+            foreach (var item in filminformation.FilmInCountry)
+            {
+                country = country + item.Country.Name + " ";
+            }
+            foreach (var item in filminformation.FilmInDirector)
+            {
+                director = director + item.Director.Name + " ";
+            }
+
+            fullinfo.Id = filminformation.Id;
+            fullinfo.OriginalName = filminformation.OriginalName;
+            fullinfo.RussianName = filminformation.RussianName;
+            fullinfo.PosterUrl = filminformation.PosterUrl;
+            fullinfo.Year = filminformation.Year;
+            fullinfo.Slogan = filminformation.Slogan;
+            fullinfo.KPRatings = filminformation.KPRatings;
+            fullinfo.IMDbRatings = filminformation.IMDbRatings;
+            fullinfo.Description = filminformation.Description;
+            fullinfo.Country = country;
+            fullinfo.Director = director;
+
+            if (fullinfo == null)
             {
                 return HttpNotFound();
             }
-            return View(film);
+
+            return View(fullinfo);
         }
 
         // GET: /Film/Create
@@ -64,7 +91,7 @@ namespace FilmInfo.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="Id,OriginalName,RussianName,PosterUrl,Year,Slogan,KPRatings,IMDbRatings,Description")] Film film)
+        public ActionResult Create([Bind(Include = "Id,OriginalName,RussianName,PosterUrl,Year,Slogan,KPRatings,IMDbRatings,Description")] Film film)
         {
             if (ModelState.IsValid)
             {
@@ -96,7 +123,7 @@ namespace FilmInfo.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="Id,OriginalName,RussianName,PosterUrl,Year,Slogan,KPRatings,IMDbRatings,Description")] Film film)
+        public ActionResult Edit([Bind(Include = "Id,OriginalName,RussianName,PosterUrl,Year,Slogan,KPRatings,IMDbRatings,Description")] Film film)
         {
             if (ModelState.IsValid)
             {

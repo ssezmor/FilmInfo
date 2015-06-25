@@ -31,6 +31,7 @@ namespace FilmInfo.Models
         public DbSet<Film> Film { get; set; }
         public DbSet<FilmInCountry> FilmInCountry { get; set; }
         public DbSet<FilmInDirector> FilmInDirector { get; set; }
+        public DbSet<FullFilmInfo> FullFilmInfo { get; set; }
     
     }
 }
