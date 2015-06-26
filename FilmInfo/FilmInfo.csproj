@@ -124,6 +124,8 @@
     <Compile Include="Controllers\FilmController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="DAL\FilmContext.cs" />
+    <Compile Include="DAL\FilmRepository.cs" />
+    <Compile Include="DAL\IFilmRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
