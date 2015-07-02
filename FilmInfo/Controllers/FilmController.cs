@@ -3,7 +3,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using FilmInfo.DAL;
 using FilmInfo.Models;
+using System;
+using PagedList;
+using System.Data;
 
 
 namespace FilmInfo.Controllers
@@ -12,161 +16,197 @@ namespace FilmInfo.Controllers
 
     public class FilmController : Controller
     {
-        private FilmContext db = new FilmContext();
+
+        private IFilmRepository filmRepository;
+        public FilmController()
+        {
+            this.filmRepository = new FilmRepository(new FilmContext());
+        }
+
+        public FilmController(IFilmRepository filmRepository)
+        {
+            this.filmRepository = filmRepository;
+        }
+
+
 
         // GET: /Film/
 
-        public ActionResult Index(int page = 1)
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            int tpage = page - 1;
-            var dataSource = db.Film;
+            int pageSize = 10;
+            int Count = filmRepository.GetFilms().Count() / pageSize;
+            ViewBag.Count = Count;
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
-            const int PageSize = 10;
 
-            var count = dataSource.Count();
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewBag.CurrentFilter = searchString;
 
-            IEnumerable<Film> OrderedDataSource = dataSource.OrderBy(film => film.Id);
+            var films = from s in filmRepository.GetFilms()
+                        select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                films = films.Where(s => s.OriginalName.ToUpper().Contains(searchString.ToUpper())
+                                       || s.RussianName.ToUpper().Contains(searchString.ToUpper()));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    films = films.OrderByDescending(s => s.OriginalName);
+                    break;
+                case "Date":
+                    films = films.OrderBy(s => s.Year);
+                    break;
+                case "date_desc":
+                    films = films.OrderByDescending(s => s.Year);
+                    break;
+                default:  // Name ascending 
+                    films = films.OrderBy(s => s.OriginalName);
+                    break;
+            }
 
-            var data = OrderedDataSource.Skip(tpage * PageSize).Take(PageSize).ToList();
 
-            this.ViewBag.MaxPage = (count / PageSize) - (count % PageSize == 0 ? 1 : 0);
 
-            this.ViewBag.PageSize = PageSize;
-            this.ViewBag.Count = count / PageSize;
+            int? CurrentPage = page;
+            int pageNumber = (page ?? 1);
 
-            this.ViewBag.CurrentPage = page;
-            return View(data);
+            this.ViewBag.CurrentPage = 1;
+
+
+            return View(films.ToPagedList(pageNumber, pageSize));
         }
 
-        // GET: /Film/Details/5
-        public ActionResult Details(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
 
 
-            Film filminformation = db.Film.Find(id);
-            FullFilmInfo fullinfo = new FullFilmInfo();
 
-            string country = "", director = "";
-            foreach (var item in filminformation.FilmInCountry)
-            {
-                country = country + item.Country.Name + " ";
-            }
-            foreach (var item in filminformation.FilmInDirector)
-            {
-                director = director + item.Director.Name + " ";
-            }
+    
+    //
+      // GET: /Films/Details/5
 
-            fullinfo.Id = filminformation.Id;
-            fullinfo.OriginalName = filminformation.OriginalName;
-            fullinfo.RussianName = filminformation.RussianName;
-            fullinfo.PosterUrl = filminformation.PosterUrl;
-            fullinfo.Year = filminformation.Year;
-            fullinfo.Slogan = filminformation.Slogan;
-            fullinfo.KPRatings = filminformation.KPRatings;
-            fullinfo.IMDbRatings = filminformation.IMDbRatings;
-            fullinfo.Description = filminformation.Description;
-            fullinfo.Country = country;
-            fullinfo.Director = director;
+      public ViewResult Details(int id)
+      {
+         Film film = filmRepository.GetFilmByID(id);
+         return View(film);
+      }
 
-            if (fullinfo == null)
-            {
-                return HttpNotFound();
-            }
+      //
+      // GET: /film/Create
 
-            return View(fullinfo);
-        }
+      public ActionResult Create()
+      {
+         return View();
+      }
 
-        // GET: /Film/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
+      //
+      // POST: /film/Create
 
-        // POST: /Film/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,OriginalName,RussianName,PosterUrl,Year,Slogan,KPRatings,IMDbRatings,Description")] Film film)
-        {
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public ActionResult Create(
+         [Bind(Include = "OriginalName, RussianName, Year ")]
+          Film film)
+      {
+         try
+         {
             if (ModelState.IsValid)
             {
-                db.Film.Add(film);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                filmRepository.InsertFilm(film);
+                filmRepository.Save();
+               return RedirectToAction("Index");
             }
+         }
+         catch ( DataException /* dex */)
+         {
+            //Log the error (uncomment dex variable name after DataException and add a line here to write a log.
+            ModelState.AddModelError(string.Empty, "Unable to save changes. Try again, and if the problem persists contact your system administrator.");
+         }
+         return View(film);
+      }
 
-            return View(film);
-        }
+      //
+      // GET: /film/Edit/5
 
-        // GET: /Film/Edit/5
-        public ActionResult Edit(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Film film = db.Film.Find(id);
-            if (film == null)
-            {
-                return HttpNotFound();
-            }
-            return View(film);
-        }
+      public ActionResult Edit(int id)
+      {
+          Film film = filmRepository.GetFilmByID(id);
+         return View(film);
+      }
 
-        // POST: /Film/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,OriginalName,RussianName,PosterUrl,Year,Slogan,KPRatings,IMDbRatings,Description")] Film film)
-        {
+      //
+      // POST: /Film/Edit/5
+
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public ActionResult Edit(
+         [Bind(Include = "OriginalName, RussianName, Year ")]
+         Film film)
+      {
+         try
+         {
             if (ModelState.IsValid)
             {
-                db.Entry(film).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+               filmRepository.UpdateFilm(film);
+               filmRepository.Save();
+               return RedirectToAction("Index");
             }
-            return View(film);
-        }
+         }
+         catch (DataException /* dex */)
+         {
+            //Log the error (uncomment dex variable name after DataException and add a line here to write a log.
+            ModelState.AddModelError(string.Empty, "Unable to save changes. Try again, and if the problem persists contact your system administrator.");
+         }
+         return View(film);
+      }
 
-        // GET: /Film/Delete/5
-        public ActionResult Delete(string id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Film film = db.Film.Find(id);
-            if (film == null)
-            {
-                return HttpNotFound();
-            }
-            return View(film);
-        }
+      //
+      // GET: /film/Delete/5
 
-        // POST: /Film/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(string id)
-        {
-            Film film = db.Film.Find(id);
-            db.Film.Remove(film);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+      public ActionResult Delete(bool? saveChangesError = false, int id = 0)
+      {
+         if (saveChangesError.GetValueOrDefault())
+         {
+            ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
+         }
+         Film film = filmRepository.GetFilmByID(id);
+         return View(film);
+      }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-    }
+      //
+      // POST: /film/Delete/5
+
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public ActionResult Delete(int id)
+      {
+         try
+         {
+             Film film = filmRepository.GetFilmByID(id);
+             filmRepository.DeleteFilm(id);
+             filmRepository.Save();
+         }
+         catch (DataException /* dex */)
+         {
+            //Log the error (uncomment dex variable name after DataException and add a line here to write a log.
+            return RedirectToAction("Delete", new { id = id, saveChangesError = true });
+         }
+         return RedirectToAction("Index");
+      }
+
+      protected override void Dispose(bool disposing)
+      {
+         filmRepository.Dispose();
+         base.Dispose(disposing);
+      }
+
+}
 }

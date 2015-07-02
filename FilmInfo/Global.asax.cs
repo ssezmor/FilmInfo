@@ -1,4 +1,5 @@
-﻿using FilmInfo.Models;
+﻿using FilmInfo.DAL;
+using FilmInfo.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

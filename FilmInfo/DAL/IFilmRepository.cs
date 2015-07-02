@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FilmInfo.DAL
 {
-    public class IFilmRepository : IDisposable
+    public interface IFilmRepository : IDisposable
     {
         IEnumerable<Film> GetFilms();
         Film GetFilmByID(int filmId);
