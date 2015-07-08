@@ -18,14 +18,14 @@ namespace FilmInfo.Controllers
 
         public ViewResult Index()
         {
-            var countries = unitOfWork.CountryRepository.Get(includeProperties: "Name");
+            var countries = unitOfWork.CountryRepository.Get();
             return View(countries.ToList());
         }
 
         //
         // GET: /Country/Details/5
 
-        public ViewResult Details(int id)
+        public ViewResult Details(string id)
         {
             Country country = unitOfWork.CountryRepository.GetByID(id);
             return View(country);
@@ -64,7 +64,7 @@ namespace FilmInfo.Controllers
             return View(country);
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
             Country country = unitOfWork.CountryRepository.GetByID(id);
             PopulateCountriesDropDownList(country.Name);
@@ -105,7 +105,7 @@ namespace FilmInfo.Controllers
         //
         // GET: /Course/Delete/5
 
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
             Country country = unitOfWork.CountryRepository.GetByID(id);
             return View(country);
@@ -116,7 +116,7 @@ namespace FilmInfo.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string id)
         {
             Country country = unitOfWork.CountryRepository.GetByID(id);
             unitOfWork.CountryRepository.Delete(id);

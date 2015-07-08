@@ -127,6 +127,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\Country1Controller.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\FilmController.cs" />
     <Compile Include="Controllers\FilmController_old_v..cs" />
@@ -194,6 +195,11 @@
     <Content Include="Views\Film\Details.cshtml" />
     <Content Include="Views\Film\Edit.cshtml" />
     <Content Include="Views\Film\Index.cshtml" />
+    <Content Include="Views\Country\Create.cshtml" />
+    <Content Include="Views\Country\Delete.cshtml" />
+    <Content Include="Views\Country\Details.cshtml" />
+    <Content Include="Views\Country\Edit.cshtml" />
+    <Content Include="Views\Country\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
